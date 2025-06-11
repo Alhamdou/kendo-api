@@ -1,6 +1,7 @@
 import { ModelStatic } from "sequelize"
 import { AuthRepo } from "../../application/repo/auth-repo"
 import { Email } from "../../domain/email"
+import { PhoneNumber } from "../../domain/phone-number"
 import { User } from "../../domain/user"
 import { UserMapper } from "../../application/mappers/user-mapper"
 
@@ -35,6 +36,17 @@ export class AuthRepoImpl implements AuthRepo {
         const query = this.createBaseQuery()
 
         query.where.email = email.value
+        const user = await UserModel.findOne(query)
+        if (!user) return null
+
+        return UserMapper.toDomain(user)
+    }
+
+    public async findByPhoneNumber(phoneNumber: PhoneNumber): Promise<User | null> {
+        const { UserModel } = this.models
+        const query = this.createBaseQuery()
+
+        query.where.phoneNumber = phoneNumber.value
         const user = await UserModel.findOne(query)
         if (!user) return null
 

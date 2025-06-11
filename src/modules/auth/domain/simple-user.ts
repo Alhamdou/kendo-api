@@ -1,0 +1,106 @@
+import { Guard } from "../../../shared/core/guard"
+import { Result } from "../../../shared/core/result"
+import { Entity } from "../../../shared/domain/entity"
+import { UniqueEntityID } from "../../../shared/domain/unique-entity-id"
+import { Name } from "./name"
+import { PhoneNumber } from "./phone-number"
+import { Role } from "./role"
+import { Token } from "./token"
+import { Password } from "./password"
+
+interface Props {
+    name: Name
+    phoneNumber: PhoneNumber
+    activated: boolean
+    roles?: Role[]
+    accessToken?: Token
+    activationToken?: Token
+    password?: Password
+}
+
+export class SimpleUser extends Entity<Props> {
+    private constructor(props: Props, id?: UniqueEntityID) {
+        super(props, id)
+    }
+
+    get id(): UniqueEntityID {
+        return this._id
+    }
+
+    get name(): Name {
+        return this.props.name
+    }
+
+    get phoneNumber(): PhoneNumber {
+        return this.props.phoneNumber
+    }
+
+    get roles(): Role[] | undefined {
+        return this.props.roles
+    }
+
+    get activated(): boolean {
+        return this.props.activated
+    }
+
+    set activated(value: boolean) {
+        this.props.activated = value
+    }
+
+    get activationToken(): Token | undefined {
+        return this.props.activationToken
+    }
+
+    get password(): Password | undefined {
+        return this.props.password
+    }
+
+    set password(value: Password | undefined) {
+        this.props.password = value
+    }
+
+    get accessToken(): Token | undefined {
+        return this.props.accessToken
+    }
+
+    set accessToken(value: Token | undefined) {
+        this.props.accessToken = value
+    }
+
+    set activationToken(value: Token | undefined) {
+        this.props.activationToken = value
+    }
+
+    activate(): void {
+        this.props.activated = true
+    }
+
+    clearActivationToken(): void {
+        this.props.activationToken = undefined
+    }
+
+    setDefaultUserRole(): void {
+        this.props.roles = [Role.create("user").getValue()]
+    }
+
+    public static create(props: Props, id?: UniqueEntityID): Result<SimpleUser> {
+        const nullGuard = Guard.againstNullOrUndefinedBulk([
+            { argument: props.name, argumentName: "name" },
+            { argument: props.phoneNumber, argumentName: "phoneNumber" },
+            { argument: props.activated, argumentName: "activated" },
+        ])
+
+        if (!nullGuard.isSuccess) {
+            return Result.fail<SimpleUser>(nullGuard.getErrorValue())
+        }
+
+        const user = new SimpleUser(props, id)
+
+        const isNewUser = !!id === false
+        if (isNewUser) {
+            // user.addDomainEvent(new SimpleUserCreated(user))
+        }
+
+        return Result.ok<SimpleUser>(user)
+    }
+}

@@ -57,6 +57,10 @@ export class User extends Entity<Props> {
         return this.props.accessToken
     }
 
+    set accessToken(value: Token | undefined) {
+        this.props.accessToken = value
+    }
+
     get activationToken(): Token | undefined {
         return this.props.activationToken
     }
@@ -67,6 +71,10 @@ export class User extends Entity<Props> {
 
     get password(): Password | undefined {
         return this.props.password
+    }
+
+    set password(value: Password | undefined) {
+        this.props.password = value
     }
 
     activate(): void {

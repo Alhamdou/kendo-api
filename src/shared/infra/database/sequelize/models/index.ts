@@ -1,9 +1,18 @@
-const isDev = process.env.NODE_ENV !== "production"
+import { MedicineModel } from "./medicine-model";
+import { UserModel } from "./user-model";
 
-const init = async () => {}
+const isDev = process.env.NODE_ENV !== "production";
 
-init()
+const init = async () => {
+    await UserModel.sync({ alter: true });
+};
 
-const models = {}
+init();
 
-export default models
+const models = {
+    UserModel,
+    MedicineModel,
+};
+
+
+export default models;
